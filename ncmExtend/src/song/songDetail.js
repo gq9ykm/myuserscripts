@@ -50,7 +50,7 @@ class SongDetail {
         this.songDetailObj = this.songDetailObj
 
         if (this.SongRes["/api/v3/song/detail"].privileges[0].plLevel != 'none') {
-            this.createTitle('下载歌曲')
+            // this.createTitle('下载歌曲')
             this.downLoadTableBody = this.createTable().querySelector('tbody')
             let plLevel = this.SongRes["/api/v3/song/detail"].privileges[0].plLevel
             let dlLevel = this.SongRes["/api/v3/song/detail"].privileges[0].dlLevel
@@ -61,7 +61,7 @@ class SongDetail {
                 this.createDLRow(`云盘文件 ${this.SongRes["/api/v3/song/detail"].songs[0].pc.br}k`, plLevel, 'pl')
             }
             else {
-                this.createTitle('转存云盘')
+                // this.createTitle('转存云盘')
                 this.upLoadTableBody = this.createTable().querySelector('tbody')
                 if (songDlWeight > songPlWeight && this.SongRes["/api/v3/song/detail"].privileges[0].fee == 0) {
                     const channel = 'dl'
@@ -293,6 +293,7 @@ class SongDetail {
         return btn
     }
     createDLRow(desc, level, channel) {
+        return
         let btn = this.createButton(levelDesc(level))
         btn.addEventListener('click', () => {
             this.dwonloadSong(channel, level, btn)
@@ -300,6 +301,7 @@ class SongDetail {
         this.createButtonDescTableRow(this.downLoadTableBody, btn, desc, true)
     }
     createULRow(desc, level, channel) {
+        return;
         if (!unsafeWindow.GUser.userId) return
         let apiUrl = '/api/song/enhance/player/url/v1'
         if (channel == 'dl') apiUrl = '/api/song/enhance/download/url/v1'

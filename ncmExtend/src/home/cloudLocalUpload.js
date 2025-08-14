@@ -14,7 +14,7 @@ export const cloudLocalUpload = (uiArea) => {
             html: `<div id="my-file">
             <input id='song-file' type="file" accept="audio/*" multiple="multiple" class="swal2-file" placeholder="" style="display: flex;">
             </div>
-            <div id="my-rd">
+            <div id="my-rd" style="visibility: hidden;">
             <div class="swal2-radio"">
             <label><input type="radio" name="file-info" value="autofill" checked><span class="swal2-label">直接上传</span></label>
             <label><input type="radio" name="file-info" value="needInput" id="need-fill-info-radio"><span class="swal2-label">先填写文件的歌手、专辑信息</span></label>
