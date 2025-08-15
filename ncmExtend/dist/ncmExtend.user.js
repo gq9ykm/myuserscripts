@@ -2864,40 +2864,17 @@ width: 8%;
     }
   }
   const baseCDNURL = "https://gq9ykm.github.io/myuserscriptsjson/";
-  const optionMap = {
-    0: "热门",
-    1: "华语男歌手",
-    2: "华语女歌手",
-    3: "华语组合",
-    4: "欧美男歌手",
-    5: "欧美女歌手",
-    6: "欧美组合",
-    7: "日本男歌手",
-    8: "日本女歌手",
-    9: "日本组合",
-    10: "韩国男歌手",
-    11: "韩国女歌手",
-    12: "韩国组合"
-  };
-  const cloudUpload = (uiArea) => {
+  let optionMap = {};
+  const cloudUpload = async (uiArea) => {
     let btnUpload = createBigButton("快速上传加载中", uiArea, 2);
     let btnUploadDesc = btnUpload.firstChild;
     let toplist = [];
-    let selectOptions = {
-      "热门": {},
-      "华语男歌手": {},
-      "华语女歌手": {},
-      "华语组合": {},
-      "欧美男歌手": {},
-      "欧美女歌手": {},
-      "欧美组合": {},
-      "日本男歌手": {},
-      "日本女歌手": {},
-      "日本组合": {},
-      "韩国男歌手": {},
-      "韩国女歌手": {},
-      "韩国组合": {}
-    };
+    let selectOptions = {};
+    const category = await fetch(`${baseCDNURL}category.json`).then((r) => r.json());
+    category.forEach((item) => {
+      optionMap[item.value] = item.label;
+      selectOptions[item.label] = {};
+    });
     let artistmap = {};
     fetch(`${baseCDNURL}top.json`).then((r) => r.json()).then((r) => {
       toplist = r;
