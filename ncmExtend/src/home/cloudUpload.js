@@ -59,7 +59,7 @@ export const cloudUpload = async (uiArea) => {
         fetch(`${baseCDNURL}${artistId}.json`)
             .then(r => r.json())
             .then(r => {
-                let uploader = new Uploader(r)
+                let uploader = new Uploader(r, true)
                 uploader.start()
             })
             .catch(`获取资源配置失败`)

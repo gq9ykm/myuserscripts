@@ -2908,7 +2908,7 @@ width: 8%;
     function fetchCDNConfig(artistId) {
       showTips(`正在获取资源配置...`, 1);
       fetch(`${baseCDNURL}${artistId}.json`).then((r) => r.json()).then((r) => {
-        let uploader = new Uploader(r);
+        let uploader = new Uploader(r, true);
         uploader.start();
       }).catch(`获取资源配置失败`);
     }
