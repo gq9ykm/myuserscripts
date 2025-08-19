@@ -3,7 +3,7 @@
 // @namespace    https://github.com/gq9ykm/myuserscripts
 // @version      4.2.9
 // @author       test
-// @description
+// @description  test
 // @license      MIT
 // @icon
 // @match        https://music.163.com/*
@@ -3240,7 +3240,6 @@ width: 27%;
       this.filename = nameFileWithoutExt(this.title, this.artist, "artist-title");
       this.songDetailObj = this.songDetailObj;
       if (this.SongRes["/api/v3/song/detail"].privileges[0].plLevel != "none") {
-        this.createTitle("下载歌曲");
         this.downLoadTableBody = this.createTable().querySelector("tbody");
         let plLevel = this.SongRes["/api/v3/song/detail"].privileges[0].plLevel;
         let dlLevel = this.SongRes["/api/v3/song/detail"].privileges[0].dlLevel;
@@ -3534,11 +3533,7 @@ width: 27%;
       return btn;
     }
     createDLRow(desc, level, channel) {
-      let btn = this.createButton(levelDesc(level));
-      btn.addEventListener("click", () => {
-        this.dwonloadSong(channel, level, btn);
-      });
-      this.createButtonDescTableRow(this.downLoadTableBody, btn, desc, true);
+      return;
     }
     createULRow(desc, level, channel) {
       return;
