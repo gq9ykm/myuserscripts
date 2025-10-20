@@ -2,6 +2,7 @@ import { weapiRequest } from "../utils/request"
 import { getArtistTextInSongDetail, getAlbumTextInSongDetail, duringTimeDesc, nameFileWithoutExt, fileSizeDesc } from "../utils/descHelper"
 import { sleep, showTips } from "../utils/common"
 import { CheckAPIDataLimit, importAPIDataLimit } from "../components/ncmDownUploadBatch"
+import { sendEvent } from "../utils/event"
 export class Uploader {
     constructor(config, showAll = false) {
         this.songs = []
@@ -479,6 +480,12 @@ width: 8%;
     }
     uploadSongImport(songIndex) {
         let song = this.songs[songIndex]
+        sendEvent('cloud_upload_upload_song', {
+            'user_id': unsafeWindow.GUser.userId,
+            'song_id': song.cloudId,
+            'song_name': song.name,
+            'cloud_song_id': song.cloudSongId,
+        })
         if (song.cloudSongId) {
             this.uploadSongMatch(songIndex)
             return
@@ -669,6 +676,10 @@ width: 8%;
     }
 
     uploadSongBatch(retry = false) {
+        sendEvent('cloud_upload_upload_song_batch', {
+            'user_id': unsafeWindow.GUser.userId,
+            'songCount': this.batchUpload.songIndexs.length
+        })
         if (this.batchUpload.checkOffset >= this.batchUpload.songIndexs.length) {
             this.onBatchUploadFinnsh()
             showTips('批量上传完成', 1)
@@ -754,6 +765,9 @@ width: 8%;
         })
     }
     uploadSongImportBatch(retry = false) {
+        sendEvent('cloud_upload_upload_song_import_batch', {
+            'user_id': unsafeWindow.GUser.userId,
+        })
         if (this.batchUpload.importOffset >= this.batchUpload.checkOffset) {
             this.uploadSongBatch()
             return

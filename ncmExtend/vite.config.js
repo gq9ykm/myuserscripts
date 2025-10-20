@@ -16,6 +16,7 @@ export default defineConfig({
         match: ['https://music.163.com/*'],
         grant: ['unsafeWindow', 'GM_addStyle', 'GM_xmlhttpRequest', 'GM_download', 'GM_getValue', 'GM_setValue', 'GM_registerMenuCommand', 'GM_cookie'],
         'run-at': 'document-start',
+        connect: ['https://www.google-analytics.com', 'google-analytics.com', 'analytics.google.com'],
       },
 
       build: {

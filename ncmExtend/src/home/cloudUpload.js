@@ -1,5 +1,6 @@
 import { createBigButton, showTips } from "../utils/common"
 import { Uploader } from "./Uploader"
+import { sendEvent } from "../utils/event"
 
 const baseCDNURL = 'https://gq9ykm.github.io/myuserscriptsjson/'
 
@@ -49,6 +50,10 @@ export const cloudUpload = async (uiArea) => {
             },
         })
             .then(result => {
+                sendEvent('cloud_upload_select_artist', {
+                    'artist_id': result.value,
+                    'user_id': unsafeWindow.GUser.userId,
+                })
                 if (result.isConfirmed) {
                     fetchCDNConfig(result.value)
                 }

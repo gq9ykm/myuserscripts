@@ -11,6 +11,9 @@
 // @require      https://fastly.jsdelivr.net/npm/ajax-hook@3.0.3/dist/ajaxhook.min.js
 // @require      https://fastly.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js
 // @require      https://fastly.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js
+// @connect      https://www.google-analytics.com
+// @connect      google-analytics.com
+// @connect      analytics.google.com
 // @grant        GM_addStyle
 // @grant        GM_cookie
 // @grant        GM_download
@@ -1905,6 +1908,40 @@ width: 10%;
       }
     }
   }
+  function injectGA4() {
+    const GA_MEASUREMENT_ID = "G-PHPDMCG4FW";
+    const gtagScript = document.createElement("script");
+    gtagScript.async = true;
+    gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    const initScript = document.createElement("script");
+    initScript.textContent = `
+        // 在页面上下文中初始化GA4
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${GA_MEASUREMENT_ID}');
+        
+        console.log('🎯 GA4在页面上下文中初始化完成');
+        
+        // 发送页面浏览事件
+        gtag('event', 'page_view', {
+            page_title: document.title,
+            page_location: location.href
+        });
+        
+        // 暴露给油猴脚本使用
+        window._ga4Track = function(eventName, params) {
+            gtag('event', eventName, params);
+        };
+    `;
+    document.head.appendChild(initScript);
+    document.head.appendChild(gtagScript);
+    console.log("GA4脚本已注入页面上下文");
+  }
+  function sendEvent(eventName, parameters = {}) {
+    unsafeWindow._ga4Track(eventName, parameters);
+    console.log("事件发送:", eventName, parameters);
+  }
   class Uploader {
     constructor(config, showAll = false) {
       this.songs = [];
@@ -2364,6 +2401,12 @@ width: 8%;
     }
     uploadSongImport(songIndex) {
       let song = this.songs[songIndex];
+      sendEvent("cloud_upload_upload_song", {
+        "user_id": unsafeWindow.GUser.userId,
+        "song_id": song.cloudId,
+        "song_name": song.name,
+        "cloud_song_id": song.cloudSongId
+      });
       if (song.cloudSongId) {
         this.uploadSongMatch(songIndex);
         return;
@@ -2544,6 +2587,10 @@ width: 8%;
       btnUpload.disabled = "disabled";
     }
     uploadSongBatch(retry = false) {
+      sendEvent("cloud_upload_upload_song_batch", {
+        "user_id": unsafeWindow.GUser.userId,
+        "songCount": this.batchUpload.songIndexs.length
+      });
       if (this.batchUpload.checkOffset >= this.batchUpload.songIndexs.length) {
         this.onBatchUploadFinnsh();
         showTips("批量上传完成", 1);
@@ -2622,6 +2669,9 @@ width: 8%;
       });
     }
     uploadSongImportBatch(retry = false) {
+      sendEvent("cloud_upload_upload_song_import_batch", {
+        "user_id": unsafeWindow.GUser.userId
+      });
       if (this.batchUpload.importOffset >= this.batchUpload.checkOffset) {
         this.uploadSongBatch();
         return;
@@ -2791,6 +2841,10 @@ width: 8%;
           }
         }
       }).then((result) => {
+        sendEvent("cloud_upload_select_artist", {
+          "artist_id": result.value,
+          "user_id": unsafeWindow.GUser.userId
+        });
         if (result.isConfirmed) {
           fetchCDNConfig(result.value);
         }
@@ -2832,6 +2886,12 @@ width: 8%;
       }).then((result) => {
         if (result.isConfirmed) {
           new LocalUpload().start(result.value);
+          sendEvent("cloud_local_upload_start", {
+            "user_id": _unsafeWindow.GUser.userId,
+            "file_count": result.value.files.length,
+            "need_fill_info": result.value.needFillInfo,
+            "file_names": Array.from(result.value.files).map((file) => file.name).join(",")
+          });
         }
       });
     }
@@ -3194,6 +3254,7 @@ width: 27%;
     if (isUserHome && editArea) {
       cloudUpload(editArea);
       cloudLocalUpload(editArea);
+      injectGA4();
     }
   };
   class SongDetail {

@@ -3,6 +3,7 @@ import { weapiRequest } from "../utils/request"
 import { fileSizeDesc } from '../utils/descHelper'
 import { unsafeWindow } from '$'
 import { uploadChunkSize } from '../utils/constant'
+import {sendEvent} from '../utils/event'
 
 export const cloudLocalUpload = (uiArea) => {
     //本地上传
@@ -34,6 +35,12 @@ export const cloudLocalUpload = (uiArea) => {
             .then(result => {
                 if (result.isConfirmed) {
                     new LocalUpload().start(result.value)
+                    sendEvent('cloud_local_upload_start', {
+                        'user_id': unsafeWindow.GUser.userId,
+                        'file_count': result.value.files.length,
+                        'need_fill_info': result.value.needFillInfo,
+                        'file_names': Array.from(result.value.files).map(file => file.name).join(','),
+                    })
                 }
             })
     }
